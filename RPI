@@ -1,0 +1,25 @@
+import cv2
+import numpy as np
+from pyzbar.pyzbar import decode
+import serial
+import time
+
+cap = cv2.VideoCapture(0)
+cap.set(3,640)
+cap.set(4,480)
+
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+
+while True:
+    # Line track
+    ser.write(b'W')
+    ser.flush()
+    # Look for QR as we go
+    while True:
+      time.sleep(1)
+      success, img = cap.read()
+      barcodes=decode(img);
+      if barcodes:
+        for barcode in barcodes:
+          s=barcode.data.decode('utf-8')
+          print(s)
